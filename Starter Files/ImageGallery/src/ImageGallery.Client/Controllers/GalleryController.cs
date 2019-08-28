@@ -173,6 +173,7 @@ namespace ImageGallery.Client.Controllers
         {
             //clear local cookie Cookies must match name from scheme in startup config
             await HttpContext.SignOutAsync("Cookies");
+            await HttpContext.SignOutAsync("oidc");
         }
 
         public async Task WriteOutIdentityInformation()
