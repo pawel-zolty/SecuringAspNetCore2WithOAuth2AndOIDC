@@ -39,6 +39,7 @@ namespace ImageGallery.Client
                options.ClientId = "imagegalleryclient";
                options.ResponseType = "code id_token";
                //options.CallbackPath = new PathString("/signin-oidc");//https://localhost:44344/signin-oidc
+               //options.SignedOutCallbackPath = new PathString("/signout-callback-oidc");//"https://localhost:44344/signout-callback-oidc"
                options.Scope.Add("openid");
                options.Scope.Add("profile");
                options.SaveTokens = true;

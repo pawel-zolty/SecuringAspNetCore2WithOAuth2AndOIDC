@@ -73,6 +73,10 @@ namespace Zoltaniecki.IDP
                     {
                         "https://localhost:44344/signin-oidc"
                     },
+                    PostLogoutRedirectUris = new List<string>
+                    {
+                        "https://localhost:44344/signout-callback-oidc"
+                    },
                     AllowedScopes =
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
