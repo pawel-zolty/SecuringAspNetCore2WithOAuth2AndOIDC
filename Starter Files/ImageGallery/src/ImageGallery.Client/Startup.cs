@@ -16,7 +16,7 @@ namespace ImageGallery.Client
         {
             Configuration = configuration;
         }
- 
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -27,7 +27,25 @@ namespace ImageGallery.Client
             // HttpContext in services by injecting it
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-            // register an IImageGalleryHttpClient
+            services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = "Cookies";
+                options.DefaultChallengeScheme = "oidc";
+            }).AddCookie("Cookies")
+            .AddOpenIdConnect("oidc", options =>
+           {
+               options.SignInScheme = "Cookies";
+               options.Authority = "https://localhost:44361";
+               options.ClientId = "imagegalleryclient";
+               options.ResponseType = "code id_token";
+               //options.CallbackPath = new PathString("/signin-oidc");//https://localhost:44344/signin-oidc
+               options.Scope.Add("openid");
+               options.Scope.Add("profile");
+               options.SaveTokens = true;
+               options.ClientSecret = "secret";
+           });
+
+            // my services
             services.AddScoped<IImageGalleryHttpClient, ImageGalleryHttpClient>();
         }
 
@@ -42,6 +60,9 @@ namespace ImageGallery.Client
             {
                 app.UseExceptionHandler("/Shared/Error");
             }
+
+            //add before mvc -> want to block request 4 unauth. users
+            app.UseAuthentication();
 
             app.UseStaticFiles();
 
