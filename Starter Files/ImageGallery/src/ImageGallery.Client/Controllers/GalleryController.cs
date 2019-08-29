@@ -169,6 +169,14 @@ namespace ImageGallery.Client.Controllers
             throw new Exception($"A problem happened while calling the API: {response.ReasonPhrase}");
         }
 
+        [HttpGet]
+        public async Task<IActionResult> OrderFrame(AddImageViewModel addImageViewModel)
+        {
+            //call userinfo endpoint
+            //create uri pass access token
+            //parse results
+        }
+
         public async Task Logout()
         {
             //clear local cookie Cookies must match name from scheme in startup config
