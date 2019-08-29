@@ -1,4 +1,5 @@
-﻿using ImageGallery.Client.Services;
+﻿using IdentityModel.Client;
+using ImageGallery.Client.Services;
 using ImageGallery.Client.ViewModels;
 using ImageGallery.Model;
 using Microsoft.AspNetCore.Authentication;
@@ -175,6 +176,23 @@ namespace ImageGallery.Client.Controllers
             //call userinfo endpoint
             //create uri pass access token
             //parse results
+            var discoverClient = new DiscoveryClient("https://localhost:44361/");
+            var metaDataResponse = await discoverClient.GetAsync();
+
+            var userInfoClient = new UserInfoClient(metaDataResponse.UserInfoEndpoint);
+
+            var accessToken = await HttpContext.GetTokenAsync(OpenIdConnectParameterNames.AccessToken);
+
+            var response = await userInfoClient.GetAsync(accessToken);
+
+            if (response.IsError)
+            {
+                throw new Exception("Problem accessing the UserInfo endpoint.", response.Exception);
+            }
+
+            var address = response.Claims.FirstOrDefault(c => c.Type == "address")?.Value;
+
+            return View(new OrderFrameVM(address));
         }
 
         public async Task Logout()
