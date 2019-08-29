@@ -45,6 +45,7 @@ namespace ImageGallery.Client
                //options.SignedOutCallbackPath = new PathString("/signout-callback-oidc");//"https://localhost:44344/signout-callback-oidc"
                options.Scope.Add("openid");
                options.Scope.Add("profile");
+               options.Scope.Add("address");
                options.SaveTokens = true;
                options.ClientSecret = "secret";
                options.GetClaimsFromUserInfoEndpoint = true;
