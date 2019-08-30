@@ -56,6 +56,8 @@ namespace ImageGallery.Client
                //Add filter which delete claim sid/idp in claims
                options.ClaimActions.DeleteClaim("sid");
                options.ClaimActions.DeleteClaim("idp");
+               //options.ClaimActions.DeleteClaim("address");//not neccessary, coz address is not mapped by default
+               options.ClaimActions.MapUniqueJsonKey("role", "role");
            });
 
             // my services
