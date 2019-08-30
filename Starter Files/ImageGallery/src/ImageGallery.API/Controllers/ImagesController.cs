@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using UnprocessableEntityObjectResult = ImageGallery.API.Helpers.UnprocessableEntityObjectResult;
 
 namespace ImageGallery.API.Controllers
 {
