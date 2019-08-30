@@ -4,6 +4,7 @@ using ImageGallery.Client.ViewModels;
 using ImageGallery.Model;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Newtonsoft.Json;
@@ -12,6 +13,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -44,6 +46,10 @@ namespace ImageGallery.Client.Controllers
                     JsonConvert.DeserializeObject<IList<Image>>(imagesAsString).ToList());
 
                 return View(galleryIndexViewModel);
+            }
+            else if(response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                return RedirectToAction("AccessDenied", "Account");
             }
 
             throw new Exception($"A problem happened while calling the API: {response.ReasonPhrase}");
