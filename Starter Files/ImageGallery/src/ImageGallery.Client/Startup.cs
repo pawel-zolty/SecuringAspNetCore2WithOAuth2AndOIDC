@@ -19,6 +19,7 @@ namespace ImageGallery.Client
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            //Clear default claim mapping
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
         }
 
@@ -52,10 +53,15 @@ namespace ImageGallery.Client
                options.Scope.Add("profile");
                options.Scope.Add("address");
                options.Scope.Add("roles");
+
                options.SaveTokens = true;
                options.ClientSecret = "secret";
+               
                //indicate whether call userInfoEndpoint for authenticated additional user data
                options.GetClaimsFromUserInfoEndpoint = true;
+
+               //see which claims are removed and mapped by default
+               //https://github.com/aspnet/Security/blob/master/src/Microsoft.AspNetCore.Authentication.OpenIdConnect/OpenIdConnectOptions.cs
                //Allow Add, Change, Remove Claims filters 
                //Remove Filter for amr to include it in claims
                options.ClaimActions.Remove("amr");
