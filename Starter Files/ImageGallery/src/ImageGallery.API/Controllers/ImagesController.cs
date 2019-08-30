@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnprocessableEntityObjectResult = ImageGallery.API.Helpers.UnprocessableEntityObjectResult;
 
 namespace ImageGallery.API.Controllers
@@ -29,8 +30,11 @@ namespace ImageGallery.API.Controllers
         [HttpGet()]
         public IActionResult GetImages()
         {
+            //claim is created from the access token
+            var ownerId = User.Claims.FirstOrDefault(u => u.Type == "sub").Value;
+
             // get from repo
-            var imagesFromRepo = _galleryRepository.GetImages();
+            var imagesFromRepo = _galleryRepository.GetImages(ownerId);
 
             // map to model
             var imagesToReturn = Mapper.Map<IEnumerable<Model.Image>>(imagesFromRepo);
@@ -47,6 +51,13 @@ namespace ImageGallery.API.Controllers
             if (imageFromRepo == null)
             {
                 return NotFound();
+            }
+
+            var ownerId = User.Claims.FirstOrDefault(u => u.Type == "sub").Value;
+
+            if (!_galleryRepository.IsImageOwner(id, ownerId))
+            {
+                return StatusCode(403);
             }
 
             var imageToReturn = Mapper.Map<Model.Image>(imageFromRepo);
@@ -120,6 +131,13 @@ namespace ImageGallery.API.Controllers
                 return NotFound();
             }
 
+            var ownerId = User.Claims.FirstOrDefault(u => u.Type == "sub").Value;
+
+            if (!_galleryRepository.IsImageOwner(id, ownerId))
+            {
+                return StatusCode(403);
+            }
+
             _galleryRepository.DeleteImage(imageFromRepo);
 
             if (!_galleryRepository.Save())
@@ -138,6 +156,13 @@ namespace ImageGallery.API.Controllers
             if (imageForUpdate == null)
             {
                 return BadRequest();
+            }
+
+            var ownerId = User.Claims.FirstOrDefault(u => u.Type == "sub").Value;
+
+            if(!_galleryRepository.IsImageOwner(id, ownerId))
+            {
+                return StatusCode(403);
             }
 
             if (!ModelState.IsValid)
