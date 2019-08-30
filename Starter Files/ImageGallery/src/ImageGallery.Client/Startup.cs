@@ -36,7 +36,10 @@ namespace ImageGallery.Client
             {
                 options.DefaultScheme = "Cookies";
                 options.DefaultChallengeScheme = "oidc";
-            }).AddCookie("Cookies")
+            }).AddCookie("Cookies", options =>
+            {
+                options.AccessDeniedPath = "/Account/AccessDenied";//it is deafult
+            })
             .AddOpenIdConnect("oidc", options =>
            {
                options.SignInScheme = "Cookies";
@@ -51,6 +54,7 @@ namespace ImageGallery.Client
                options.Scope.Add("roles");
                options.SaveTokens = true;
                options.ClientSecret = "secret";
+               //indicate whether call userInfoEndpoint for authenticated additional user data
                options.GetClaimsFromUserInfoEndpoint = true;
                //Allow Add, Change, Remove Claims filters 
                //Remove Filter for amr to include it in claims
@@ -61,6 +65,7 @@ namespace ImageGallery.Client
                //options.ClaimActions.DeleteClaim("address");//not neccessary, coz address is not mapped by default
                options.ClaimActions.MapUniqueJsonKey("role", "role");
 
+               //Sets the System.String that defines the System.Security.Claims.ClaimsIdentity. parameters
                options.TokenValidationParameters = new TokenValidationParameters()
                {
                    NameClaimType = JwtClaimTypes.GivenName,
