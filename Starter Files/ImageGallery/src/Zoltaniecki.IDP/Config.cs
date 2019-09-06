@@ -28,8 +28,8 @@ namespace Zoltaniecki.IDP
                         new Claim("family_name", "Underwood"),
                         new Claim("address", "Main Road 1"),
                         new Claim("role", "FreeUser"),
-                        //new Claim("subscriptionlevel", "FreeUser"),
-                        //new Claim("country", "nl")
+                        new Claim("subscriptionlevel", "FreeUser"),
+                        new Claim("country", "nl")
                     }
                 },
                 new TestUser
@@ -44,8 +44,8 @@ namespace Zoltaniecki.IDP
                         new Claim("family_name", "Underwood"),
                         new Claim("address", "Big Street 2"),
                         new Claim("role", "PayingUser"),
-                        //new Claim("subscriptionlevel", "PayingUser"),
-                        //new Claim("country", "be")
+                        new Claim("subscriptionlevel", "PayingUser"),
+                        new Claim("country", "be")
                     }
                 }
             };
@@ -59,11 +59,25 @@ namespace Zoltaniecki.IDP
                 new IdentityResources.Profile(),
                 new IdentityResources.Address(),
                 new IdentityResource(
-                    "roles", 
-                    "Your role(s)", 
+                    "roles",
+                    "Your role(s)",
                     new List<string>()
                     {
                         "role"
+                    }),
+                new IdentityResource(
+                    "country",
+                    "Country you are living in",
+                    new List<string>()
+                    {
+                        "country"
+                    }),
+                new IdentityResource(
+                    "subscriptionlevel",
+                    "Your subscription level",
+                    new List<string>()
+                    {
+                        "subscriptionlevel"
                     })
             };
         }
@@ -95,12 +109,14 @@ namespace Zoltaniecki.IDP
                         "https://localhost:44344/signout-callback-oidc"
                     },
                     AllowedScopes =
-                    { 
+                    {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
                         IdentityServerConstants.StandardScopes.Address,
                         "roles",
-                        "imagegalleryapi"
+                        "imagegalleryapi",
+                        "country",
+                        "subscriptionlevel"
                     },
                     ClientSecrets =
                     {
