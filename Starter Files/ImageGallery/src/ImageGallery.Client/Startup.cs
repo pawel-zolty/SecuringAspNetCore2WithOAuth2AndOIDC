@@ -54,6 +54,8 @@ namespace ImageGallery.Client
                options.Scope.Add("address");
                options.Scope.Add("roles");
                options.Scope.Add("imagegalleryapi");
+               options.Scope.Add("country");
+               options.Scope.Add("subscriptionlevel");
 
                options.SaveTokens = true;
                options.ClientSecret = "secret";
@@ -71,6 +73,8 @@ namespace ImageGallery.Client
                options.ClaimActions.DeleteClaim("idp");
                //options.ClaimActions.DeleteClaim("address");//not neccessary, coz address is not mapped by default
                options.ClaimActions.MapUniqueJsonKey("role", "role");
+               options.ClaimActions.MapUniqueJsonKey("country", "country");
+               options.ClaimActions.MapUniqueJsonKey("subscriptionlevel", "subscriptionlevel");
 
                //Sets the System.String that defines the System.Security.Claims.ClaimsIdentity. parameters
                options.TokenValidationParameters = new TokenValidationParameters()
