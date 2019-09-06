@@ -44,20 +44,14 @@ namespace ImageGallery.API.Controllers
         }
 
         [HttpGet("{id}", Name = "GetImage")]
+        [Authorize(Policy = "MustOwnImage")]
         public IActionResult GetImage(Guid id)
-        {          
+        {
             var imageFromRepo = _galleryRepository.GetImage(id);
 
             if (imageFromRepo == null)
             {
                 return NotFound();
-            }
-
-            var ownerId = User.Claims.FirstOrDefault(u => u.Type == "sub").Value;
-
-            if (!_galleryRepository.IsImageOwner(id, ownerId))
-            {
-                return StatusCode(403);
             }
 
             var imageToReturn = Mapper.Map<Model.Image>(imageFromRepo);
@@ -92,7 +86,7 @@ namespace ImageGallery.API.Controllers
 
             // create the filename
             string fileName = Guid.NewGuid().ToString() + ".jpg";
-            
+
             // the full file path
             var filePath = Path.Combine($"{webRootPath}/images/{fileName}");
 
@@ -122,21 +116,14 @@ namespace ImageGallery.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Policy = "MustOwnImage")]
         public IActionResult DeleteImage(Guid id)
         {
-            
             var imageFromRepo = _galleryRepository.GetImage(id);
 
             if (imageFromRepo == null)
             {
                 return NotFound();
-            }
-
-            var ownerId = User.Claims.FirstOrDefault(u => u.Type == "sub").Value;
-
-            if (!_galleryRepository.IsImageOwner(id, ownerId))
-            {
-                return StatusCode(403);
             }
 
             _galleryRepository.DeleteImage(imageFromRepo);
@@ -150,20 +137,13 @@ namespace ImageGallery.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateImage(Guid id, 
+        [Authorize(Policy = "MustOwnImage")]
+        public IActionResult UpdateImage(Guid id,
             [FromBody] ImageForUpdate imageForUpdate)
         {
-           
             if (imageForUpdate == null)
             {
                 return BadRequest();
-            }
-
-            var ownerId = User.Claims.FirstOrDefault(u => u.Type == "sub").Value;
-
-            if(!_galleryRepository.IsImageOwner(id, ownerId))
-            {
-                return StatusCode(403);
             }
 
             if (!ModelState.IsValid)

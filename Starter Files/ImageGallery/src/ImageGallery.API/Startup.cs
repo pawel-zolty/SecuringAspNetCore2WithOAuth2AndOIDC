@@ -1,6 +1,8 @@
 ﻿using IdentityServer4.AccessTokenValidation;
+using ImageGallery.API.Authorization;
 using ImageGallery.API.Entities;
 using ImageGallery.API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -19,12 +21,21 @@ namespace ImageGallery.API
         {
             Configuration = configuration;
         }
-        
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit http://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-             services.AddMvc();
+            services.AddMvc();
+
+            services.AddAuthorization(authorizationOptions =>
+            {
+                authorizationOptions.AddPolicy("MustOwnImage", policyBuilder =>
+                {
+                    policyBuilder.RequireAuthenticatedUser();
+                    policyBuilder.AddRequirements(new MustOwnImageRequirement());
+                });
+            });
 
             services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
                 .AddIdentityServerAuthentication(options =>
@@ -42,10 +53,12 @@ namespace ImageGallery.API
 
             // register the repository
             services.AddScoped<IGalleryRepository, GalleryRepository>();
+
+            services.AddScoped<IAuthorizationHandler, MustOwnImageHandler>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, 
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env,
             ILoggerFactory loggerFactory, GalleryContext galleryContext)
         {
             if (env.IsDevelopment())
@@ -90,9 +103,9 @@ namespace ImageGallery.API
                     .ForMember(m => m.OwnerId, options => options.Ignore());
             });
 
-            AutoMapper.Mapper.AssertConfigurationIsValid();            
+            AutoMapper.Mapper.AssertConfigurationIsValid();
 
-            app.UseMvc(); 
+            app.UseMvc();
         }
     }
 }
