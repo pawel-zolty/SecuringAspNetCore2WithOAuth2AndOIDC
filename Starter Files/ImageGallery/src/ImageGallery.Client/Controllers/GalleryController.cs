@@ -179,7 +179,8 @@ namespace ImageGallery.Client.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "PayingUser")]
+        //[Authorize(Roles = "PayingUser")]
+        [Authorize(Policy = "CanOrderFrame")]
         public async Task<IActionResult> OrderFrame(AddImageViewModel addImageViewModel)
         {
             //call userinfo endpoint
